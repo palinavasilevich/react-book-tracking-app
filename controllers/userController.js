@@ -47,6 +47,38 @@ const register = async (req, res) => {
   res.send({ email, password, name });
 };
 
+/**
+ * @route   POST api/user/login
+ * @desc    Login user
+ * @access  public
+ */
+const login = async (req, res) => {
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    return res.status(400).json({ message: "Fill in all required fields" });
+  }
+
+  try {
+    const user = await prisma.user.findUnique({ where: { email } });
+
+    if (!user) {
+      return res.status(400).json({ message: "Wrong login or password" });
+    }
+
+    const isValidPassword = await bcrypt.compare(password, user.password);
+
+    if (!isValidPassword) {
+      return res.status(400).json({ message: "Wrong login or password" });
+    }
+
+    res.json({ id: user.id, email: user.email, name: user.name });
+  } catch (error) {
+    console.error("Login error", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 module.exports = {
   login,
   register,
