@@ -5,11 +5,15 @@ const logger = require("morgan");
 
 require("dotenv").config();
 
+const router = require("./routes");
+
 const app = express();
 
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+
+app.use("/api", router);
 
 module.exports = app;
