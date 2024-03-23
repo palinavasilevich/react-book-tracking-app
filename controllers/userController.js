@@ -37,7 +37,9 @@ const register = async (req, res) => {
       id: user.id,
       email: user.email,
       name,
-      token: jwt.sign({ userId: user.id }, secretKey, { expiresIn: "24h" }),
+      token: jwt.sign({ userId: user.id }, process.env.SECRET_KEY, {
+        expiresIn: "24h",
+      }),
     });
   } catch (error) {
     console.error("Failed to create new user", error);
@@ -77,6 +79,15 @@ const login = async (req, res) => {
     console.error("Login error", error);
     res.status(500).json({ message: "Internal server error" });
   }
+};
+
+/**
+ * @route   POST api/user/current
+ * @desc    Get current user
+ * @access  public
+ */
+const current = async (req, res) => {
+  res.send("current");
 };
 
 module.exports = {
