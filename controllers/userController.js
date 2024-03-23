@@ -64,13 +64,9 @@ const login = async (req, res) => {
   try {
     const user = await prisma.user.findUnique({ where: { email } });
 
-    if (!user) {
-      return res.status(400).json({ message: "Wrong login or password" });
-    }
-
     const isValidPassword = await bcrypt.compare(password, user.password);
 
-    if (!isValidPassword) {
+    if (!user && !isValidPassword) {
       return res.status(400).json({ message: "Wrong login or password" });
     }
 
@@ -82,12 +78,12 @@ const login = async (req, res) => {
 };
 
 /**
- * @route   POST api/user/current
+ * @route   GET api/user/current
  * @desc    Get current user
  * @access  public
  */
 const current = async (req, res) => {
-  res.send("current");
+  const { id } = req.params;
 };
 
 module.exports = {
