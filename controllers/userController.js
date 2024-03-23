@@ -2,6 +2,12 @@ const { prisma } = require("../prisma/prisma-client");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
+const generateJwt = (id) => {
+  return jwt.sign({ id }, process.env.SECRET_KEY, {
+    expiresIn: "24h",
+  });
+};
+
 /**
  * @route   POST api/user/register
  * @desc    Register user
@@ -37,9 +43,7 @@ const register = async (req, res) => {
       id: user.id,
       email: user.email,
       name,
-      token: jwt.sign({ userId: user.id }, process.env.SECRET_KEY, {
-        expiresIn: "24h",
-      }),
+      token: generateJwt({ id: user.id }),
     });
   } catch (error) {
     console.error("Failed to create new user", error);
@@ -64,13 +68,22 @@ const login = async (req, res) => {
   try {
     const user = await prisma.user.findUnique({ where: { email } });
 
-    const isValidPassword = await bcrypt.compare(password, user.password);
-
-    if (!user && !isValidPassword) {
-      return res.status(400).json({ message: "Wrong login or password" });
+    if (!user) {
+      return res.status(400).json({ error: "Wrong login or password" });
     }
 
-    res.json({ id: user.id, email: user.email, name: user.name });
+    const isValidPassword = await bcrypt.compare(password, user.password);
+
+    if (!isValidPassword) {
+      return res.status(400).json({ error: "Wrong login or password" });
+    }
+
+    res.json({
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      token: generateJwt({ id: user.id }),
+    });
   } catch (error) {
     console.error("Login error", error);
     res.status(500).json({ message: "Internal server error" });
@@ -80,7 +93,7 @@ const login = async (req, res) => {
 /**
  * @route   GET api/user/current
  * @desc    Get current user
- * @access  public
+ * @access  private
  */
 const current = async (req, res) => {
   const { id } = req.params;
