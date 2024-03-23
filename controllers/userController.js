@@ -2,7 +2,7 @@ const { prisma } = require("../prisma/prisma-client");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
-const generateJwt = (id) => {
+const generateJwt = ({ id }) => {
   return jwt.sign({ id }, process.env.SECRET_KEY, {
     expiresIn: "24h",
   });
@@ -96,7 +96,7 @@ const login = async (req, res) => {
  * @access  private
  */
 const current = async (req, res) => {
-  const { id } = req.params;
+  return res.status(200).json(req.user);
 };
 
 module.exports = {
