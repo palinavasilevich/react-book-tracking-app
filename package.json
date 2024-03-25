@@ -5,8 +5,8 @@
   "scripts": {
     "start": "node ./bin/www",
     "server": "nodemon ./bin/www",
-    "client": "npm start --prefix client",
-    "dev": "concurrently \"npm run server\" \"npm run client\""
+    "dev:client": "cd client && npm run dev",
+    "dev": "concurrently \"npm run server\" \"npm run dev:client\""
   },
   "dependencies": {
     "@prisma/client": "^5.11.0",
