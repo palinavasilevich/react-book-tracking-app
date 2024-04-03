@@ -31,11 +31,11 @@ const register = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    await prisma.user.create({
+    const user = await prisma.user.create({
       data: {
         email,
-        password: hashedPassword,
         name,
+        password: hashedPassword,
       },
     });
 
@@ -47,7 +47,7 @@ const register = async (req, res) => {
     });
   } catch (error) {
     console.error("Failed to create new user", error);
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ message: "Internal server error" });
   }
 
   res.send({ email, password, name });
@@ -69,13 +69,13 @@ const login = async (req, res) => {
     const user = await prisma.user.findUnique({ where: { email } });
 
     if (!user) {
-      return res.status(400).json({ error: "Wrong login or password" });
+      return res.status(400).json({ message: "Wrong login or password" });
     }
 
     const isValidPassword = await bcrypt.compare(password, user.password);
 
     if (!isValidPassword) {
-      return res.status(400).json({ error: "Wrong login or password" });
+      return res.status(400).json({ message: "Wrong login or password" });
     }
 
     res.json({

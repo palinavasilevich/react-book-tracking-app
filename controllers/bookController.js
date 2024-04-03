@@ -8,7 +8,7 @@ const { prisma } = require("../prisma/prisma-client");
 
 const createBook = async (req, res) => {
   try {
-    const { title, author, img } = req.body;
+    const { title, author, img, rating, readDate } = req.body;
 
     if (!title || !author) {
       return res.status(400).json({ message: "All fields are required" });
@@ -19,6 +19,8 @@ const createBook = async (req, res) => {
         title,
         author,
         img: img ? img : "",
+        rating,
+        readDate,
         userId: req.user.id,
       },
     });
@@ -73,6 +75,8 @@ const deleteBook = async (req, res) => {
 const updateBook = async (req, res) => {
   const { id } = req.params;
   const data = req.body;
+
+  console.log(data);
 
   try {
     await prisma.book.update({
