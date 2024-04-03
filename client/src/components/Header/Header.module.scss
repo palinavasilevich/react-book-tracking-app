@@ -1,0 +1,20 @@
+.header {
+  margin-bottom: 20px;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  a {
+    color: inherit;
+  }
+
+  .logoTitle {
+    font-size: 26px;
+  }
+
+  .icon {
+    margin-right: -10px;
+    font-size: 20px;
+  }
+}
