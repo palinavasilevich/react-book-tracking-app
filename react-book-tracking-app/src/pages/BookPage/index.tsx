@@ -34,7 +34,6 @@ import { useModal } from "../../hooks/useModal";
 import { BookForm } from "../../components/BookForm";
 import { Book } from "../../types";
 
-import axios from "axios";
 import dayjs from "dayjs";
 import { useNotificationAntd } from "../../hooks/useNotificationAntd";
 
@@ -65,14 +64,7 @@ export const BookPage: FC = () => {
 
   const [updateBook] = useUpdateBookMutation();
 
-  const [bookCoverISBN, setBookCoverISBN] = useState("");
   const [isLoadingBookCover, setIsLoadingBookCover] = useState(false);
-
-  // useEffect(() => {
-  //   if (data) {
-  //     getBookCover(data.title, data.author);
-  //   }
-  // }, [data]);
 
   if (isLoading || isLoadingBookCover) {
     return <Spin size="large" />;
@@ -121,31 +113,11 @@ export const BookPage: FC = () => {
     }
   };
 
-  const getBookCover = async (bookTitle: string, authorName: string) => {
-    setIsLoadingBookCover(true);
-    try {
-      const response = await axios.get(
-        `https://openlibrary.org/search.json?title=${bookTitle}&author=${authorName}`,
-      );
-
-      setBookCoverISBN(response.data.docs[0].isbn[0]);
-    } catch (error) {
-    } finally {
-      setIsLoadingBookCover(false);
-    }
-  };
-
   return (
     <>
       {contextHolder}
       <Card>
         <Typography.Title>{data.title}</Typography.Title>
-        {/* <Flex align="center" gap="large" wrap="wrap"> */}
-        {/* <Image
-            width={250}
-            src={`https://covers.openlibrary.org/b/isbn/${bookCoverISBN}-L.jpg`}
-          /> */}
-
         <Descriptions bordered>
           <Descriptions.Item label="Author" span={3}>
             {data.author}
@@ -159,7 +131,7 @@ export const BookPage: FC = () => {
             <Rate disabled defaultValue={data.rating} />
           </Descriptions.Item>
         </Descriptions>
-        {/* </Flex> */}
+
         {user?.id === data.userId && (
           <>
             <Divider orientation="left"></Divider>

@@ -1,0 +1,14 @@
+version: "3"
+services:
+  book-tracking-api:
+    build: .
+    ports:
+      - "3000:3000"
+    depends_on:
+      - react-book-tracking-app
+    environment:
+      DATABASE_URL: file:./prisma/dev.db
+  react-book-tracking-app:
+    build: ../react-book-tracking-app
+    ports:
+      - "80:80"
